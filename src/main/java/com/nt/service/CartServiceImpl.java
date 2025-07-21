@@ -12,6 +12,7 @@ import com.nt.repository.ICartItemRepository;
 import com.nt.repository.ICartRepository;
 import com.nt.repository.IProductRepository;
 import com.nt.repository.IUserRepository;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -243,6 +244,7 @@ public class CartServiceImpl implements ICartService {
         return "Product removed from cart successfully";
     }
 
+    @Transactional
     @Override
     public String createOrUpdateCartWithItems(List<CartItemDTO> cartItems) {
 
@@ -250,10 +252,40 @@ public class CartServiceImpl implements ICartService {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = userRepository.findByUserName(userDetails.getUsername())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "username", userDetails.getUsername()));
-        Cart cart = user.getCart();
+        Cart existingCart = user.getCart();
+        if(existingCart == null){
+            existingCart = new Cart();
+            existingCart.setTotalPrice(0.00);
+            existingCart.setUser(user);
+            existingCart =  cartRepository.save(existingCart);
+
+        }
+        else{
+            iCartItemRepository.deleteAllByCartId(existingCart.getCartId());
+
+        }
+        Double totalPrice = 0.00;
+        for(CartItemDTO cartItemDTO : cartItems){
+            Long productId = cartItemDTO.getProductId();
+            Integer quantity = cartItemDTO.getQuantity();
+            Product product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
+            //product.setQuantity(product.getQuantity() - quantity);
+            totalPrice += product.getSpecialPrice()*quantity;
+
+            CartItem cartItem = new CartItem();
+            cartItem.setProduct(product);
+            cartItem.setQuantity(quantity);
+            cartItem.setCart(existingCart);
+            cartItem.setProductPrice(product.getSpecialPrice());
+            cartItem.setDiscount(product.getDiscount());
+            iCartItemRepository.save(cartItem);
+        }
+
+        existingCart.setTotalPrice(totalPrice);
+        cartRepository.save(existingCart);
 
 
-        return "";
+        return "Cart Created Or Updated Successfully";
     }
 
 }

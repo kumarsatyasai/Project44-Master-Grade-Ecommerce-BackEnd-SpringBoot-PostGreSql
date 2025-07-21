@@ -51,7 +51,7 @@ public class CartController {
     @GetMapping("/carts/users/cart")
     public ResponseEntity<CartDTO> getUserCart(){
         CartDTO cartDTO = cartService.getUsersCart();
-        return new ResponseEntity<>(cartDTO, HttpStatus.FOUND);
+        return new ResponseEntity<>(cartDTO, HttpStatus.OK);
     }
 
     @PutMapping("/carts/products/{productId}/quantity/{operation}")

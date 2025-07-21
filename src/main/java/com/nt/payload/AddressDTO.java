@@ -12,6 +12,7 @@ public class AddressDTO {
 
 
 
+    private Long addressId;
 
     private String street;
 
