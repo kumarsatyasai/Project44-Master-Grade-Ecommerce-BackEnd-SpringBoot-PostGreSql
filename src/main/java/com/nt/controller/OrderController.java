@@ -4,17 +4,17 @@ package com.nt.controller;
 import com.nt.model.User;
 import com.nt.payload.OrderDTO;
 import com.nt.payload.OrderRequestDTO;
+import com.nt.payload.StripePaymentDto;
 import com.nt.repository.IUserRepository;
 import com.nt.service.IOrderService;
+import com.nt.service.IStripeService;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -25,6 +25,9 @@ public class OrderController {
 
     @Autowired
     private IOrderService orderService;
+
+    @Autowired
+    private IStripeService stripeService;
 
 
 
@@ -47,6 +50,16 @@ public class OrderController {
 
 
         return new ResponseEntity<>(orderDTO, org.springframework.http.HttpStatus.CREATED);
+    }
+
+    @PostMapping("/order/stripe-client-secret")
+    public ResponseEntity<String> placeOrder(@RequestBody StripePaymentDto  stripePaymentDto) throws StripeException {
+
+        PaymentIntent paymentIntent = stripeService.paymentIntent(stripePaymentDto);
+
+        return new ResponseEntity<>(paymentIntent.getClientSecret(), org.springframework.http.HttpStatus.CREATED);
+
+
     }
 
 }

@@ -6,6 +6,7 @@ import com.nt.model.CartItem;
 import com.nt.model.Product;
 import com.nt.model.User;
 import com.nt.payload.CartDTO;
+import com.nt.payload.CartItemDTO;
 import com.nt.payload.ProductDTO;
 import com.nt.repository.ICartItemRepository;
 import com.nt.repository.ICartRepository;
@@ -241,4 +242,18 @@ public class CartServiceImpl implements ICartService {
 
         return "Product removed from cart successfully";
     }
+
+    @Override
+    public String createOrUpdateCartWithItems(List<CartItemDTO> cartItems) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = userRepository.findByUserName(userDetails.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", userDetails.getUsername()));
+        Cart cart = user.getCart();
+
+
+        return "";
+    }
+
 }

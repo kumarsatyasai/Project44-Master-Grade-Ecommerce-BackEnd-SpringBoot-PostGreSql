@@ -1,6 +1,5 @@
 package com.nt.payload;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,10 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartItemDTO {
+public class StripePaymentDto {
 
-    private Long productId;
-
-    private Integer quantity;
+    private Long amount;
+    private String currency;
 
 }

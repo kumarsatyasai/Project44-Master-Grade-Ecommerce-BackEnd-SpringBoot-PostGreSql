@@ -1,6 +1,7 @@
 package com.nt.service;
 
 import com.nt.payload.CartDTO;
+import com.nt.payload.CartItemDTO;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface ICartService {
     CartDTO updatedCartProduct(Long productId, Integer delete);
 
     String deleteProductFromCart(Long cartId, Long productId);
+
+    String createOrUpdateCartWithItems(List<CartItemDTO> cartItems);
 }

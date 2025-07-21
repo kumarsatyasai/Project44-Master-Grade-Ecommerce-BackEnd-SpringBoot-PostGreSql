@@ -1,6 +1,7 @@
 package com.nt.controller;
 
 import com.nt.payload.CartDTO;
+import com.nt.payload.CartItemDTO;
 import com.nt.service.ICartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,18 @@ public class CartController {
 
     @Autowired
     private ICartService cartService;
+
+    // Adding Products To cart with Respective To user.
+    @PostMapping("/cart/create")
+    public ResponseEntity<String> createOrUpdateCart(@RequestBody List<CartItemDTO> cartItems){
+
+        String response = cartService.createOrUpdateCartWithItems(cartItems);
+
+        return new ResponseEntity<>(response,  HttpStatus.CREATED);
+
+
+
+    }
 
     // Adding Products To cart with Respective To user.
     @PostMapping("/carts/products/{productId}/quantity/{quantity}")
